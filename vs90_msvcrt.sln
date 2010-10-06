@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "msvcrt_supplement", "msvcrt_supplement\msvcrt_supplement.vcproj", "{513DD943-EA71-4C05-A936-CD75F5471DE8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\helloWorld.vcproj", "{42C8C33D-E1CC-4B47-A9DF-16C2726C5DCF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{513DD943-EA71-4C05-A936-CD75F5471DE8} = {513DD943-EA71-4C05-A936-CD75F5471DE8}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BE1EFB7-A408-4F12-AC73-78119EF98677}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.txt = Readme.txt
+		vs90_msvcrt.vsprops = vs90_msvcrt.vsprops
+		wdk.patch = wdk.patch
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{513DD943-EA71-4C05-A936-CD75F5471DE8}.Debug|Win32.ActiveCfg = Release|Win32
+		{513DD943-EA71-4C05-A936-CD75F5471DE8}.Release|Win32.ActiveCfg = Release|Win32
+		{513DD943-EA71-4C05-A936-CD75F5471DE8}.Release|Win32.Build.0 = Release|Win32
+		{42C8C33D-E1CC-4B47-A9DF-16C2726C5DCF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{42C8C33D-E1CC-4B47-A9DF-16C2726C5DCF}.Debug|Win32.Build.0 = Debug|Win32
+		{42C8C33D-E1CC-4B47-A9DF-16C2726C5DCF}.Release|Win32.ActiveCfg = Release|Win32
+		{42C8C33D-E1CC-4B47-A9DF-16C2726C5DCF}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

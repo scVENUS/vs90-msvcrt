@@ -1,0 +1,186 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..aa49726
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++/lib/Crt/i386/msvcrt_supplement.lib
+diff --git a/inc/crt/crtdefs.h b/inc/crt/crtdefs.h
+index 3e622d2..a44d70a 100644
+--- a/inc/crt/crtdefs.h
++++ b/inc/crt/crtdefs.h
+@@ -329,8 +329,10 @@ defined(__cplusplus) is due to some code that sets MANAGED_CXX but builds .c fil
+ #endif
+ 
+ #ifndef _CRT_SECURE_FORCE_DEPRECATE
++#ifndef _CRT_SECURE_NO_DEPRECATE
+ #define _CRT_SECURE_NO_DEPRECATE
+ #endif
++#endif
+ 
+ /* Define _CRT_INSECURE_DEPRECATE */
+ #ifndef _CRT_INSECURE_DEPRECATE
+@@ -441,8 +443,10 @@ _CRT_DEPRECATE_TEXT("Direct heap access is not safely possible from managed code
+ #endif  /* !defined (RC_INVOKED) */
+ 
+ #ifndef _CRT_NONSTDC_FORCE_DEPRECATE
++#ifndef _CRT_NONSTDC_NO_DEPRECATE
+ #define _CRT_NONSTDC_NO_DEPRECATE
+ #endif
++#endif
+ 
+ /* Define _CRT_NONSTDC_DEPRECATE */
+ #if !defined(_CRT_NONSTDC_DEPRECATE)
+@@ -505,7 +509,9 @@ typedef __int64 __time64_t;     /* 64-bit time value */
+ #define _TIME64_T_DEFINED
+ 
+ #ifndef _WIN64
++#ifndef _NO_USE_32BIT_TIME_T
+ #define _USE_32BIT_TIME_T
++#endif
+ #endif 
+ 
+ #ifdef _USE_32BIT_TIME_T
+diff --git a/inc/crt/ctype.h b/inc/crt/ctype.h
+index b26c53d..c491af0 100644
+--- a/inc/crt/ctype.h
++++ b/inc/crt/ctype.h
+@@ -313,8 +313,13 @@ int __cdecl _chvalidator_l(_locale_t, int, int);
+ #define _isgraph_l(_Char, _Locale)      _ischartype_l(_Char, _PUNCT|_ALPHA|_DIGIT, _Locale)
+ #define _iscntrl_l(_Char, _Locale)      _ischartype_l(_Char, _CONTROL, _Locale)
+ 
++#ifndef _NO_DEPRECATED__TOLOWER__TOUPPER
+ #define _tolower(_Char)    _tolower_deprecated(_Char)
+ #define _toupper(_Char)    _toupper_deprecated(_Char)
++#else
++#define _tolower(_Char)    ( (_Char)-'A'+'a' )
++#define _toupper(_Char)    ( (_Char)-'a'+'A' )
++#endif
+ 
+ #define __isascii(_Char)   ( (unsigned)(_Char) < 0x80 )
+ #define __toascii(_Char)   ( (_Char) & 0x7f )
+diff --git a/inc/crt/stdlib.h b/inc/crt/stdlib.h
+index cce7fa7..5c59981 100644
+--- a/inc/crt/stdlib.h
++++ b/inc/crt/stdlib.h
+@@ -206,6 +206,12 @@ _CRTIMP int __cdecl ___mb_cur_max_l_func(_locale_t);
+  */
+ #define _MAX_ENV 32767   
+ 
++#if !defined(_M_CEE_PURE)
++typedef void (__cdecl *_invalid_parameter_handler)(const wchar_t *, const wchar_t *, const wchar_t *, unsigned int, uintptr_t); 
++/* establishes a invalid_arg handler for the process */
++#define _set_invalid_parameter_handler(_Handler) ((_invalid_parameter_handler)0)
++#define _get_invalid_parameter_handler() ((_invalid_parameter_handler)0)
++#endif
+ 
+ /* External variable declarations */
+ #ifndef _CRT_ERRNO_DEFINED
+diff --git a/inc/crt/sys/stat.h b/inc/crt/sys/stat.h
+index 441b263..59949fa 100644
+--- a/inc/crt/sys/stat.h
++++ b/inc/crt/sys/stat.h
+@@ -193,10 +193,10 @@ _CRTIMP int __cdecl _stat32(__in_z const char * _Name, __out struct _stat32 * _S
+ 
+ #if     _INTEGRAL_MAX_BITS >= 64
+ _CRTIMP int __cdecl _fstat32i64(__in int _FileDes, __out struct _stat32i64 * _Stat);
+-_CRTIMP int __cdecl _fstat64i32(__in int _FileDes, __out struct _stat64i32 * _Stat);
++int __cdecl _fstat64i32(__in int _FileDes, __out struct _stat64i32 * _Stat);
+ _CRTIMP int __cdecl _fstat64(__in int _FileDes, __out struct _stat64 * _Stat);
+ _CRTIMP int __cdecl _stat32i64(__in_z const char * _Name, __out struct _stat32i64 * _Stat);
+-_CRTIMP int __cdecl _stat64i32(__in_z const char * _Name, __out struct _stat64i32 * _Stat);
++int __cdecl _stat64i32(__in_z const char * _Name, __out struct _stat64i32 * _Stat);
+ _CRTIMP int __cdecl _stat64(__in_z const char * _Name, __out struct _stat64 * _Stat);
+ #endif
+ 
+diff --git a/inc/crt/sys/stat.inl b/inc/crt/sys/stat.inl
+index cef42e6..9eb4fb6 100644
+--- a/inc/crt/sys/stat.inl
++++ b/inc/crt/sys/stat.inl
+@@ -20,6 +20,42 @@
+ #ifndef _INC_STAT_INL
+ #define _INC_STAT_INL
+ 
++/* _STATIC_ASSERT is for enforcing boolean/integral conditions at compile time.
++   Since it is purely a compile-time mechanism that generates no code, the check
++   is left in even if _DEBUG is not defined. */
++
++#ifndef _STATIC_ASSERT
++#define _STATIC_ASSERT(expr) typedef char __static_assert_t[ (expr) ]
++#endif
++
++#if     !__STDC__
++
++/* Non-ANSI names for compatibility */
++#ifdef _USE_32BIT_TIME_T
++static __inline int __CRTDECL fstat(int _Desc, struct stat * _Stat)
++{
++    _STATIC_ASSERT( sizeof(struct stat) == sizeof(struct _stat) );
++    return _fstat(_Desc,(struct _stat *)_Stat);
++}
++static __inline int __CRTDECL stat(const char * _Filename, struct stat * _Stat)
++{
++    _STATIC_ASSERT( sizeof(struct stat) == sizeof(struct _stat) );
++    return _stat(_Filename,(struct _stat *)_Stat);
++}
++#else
++static __inline int __CRTDECL fstat(int _Desc, struct stat * _Stat)
++{
++    _STATIC_ASSERT( sizeof(struct stat) == sizeof(struct _stat64i32) );
++	return _fstat64i32(_Desc, (struct _stat64i32 *) _Stat);
++}
++static __inline int __CRTDECL stat(const char * _Filename, struct stat * _Stat)
++{
++    _STATIC_ASSERT( sizeof(struct stat) == sizeof(struct _stat64i32) );
++	return _stat64i32(_Filename, (struct _stat64i32 *) _Stat);
++}
++#endif /* _USE_32BIT_TIME_T */
++
++#endif /* !__STDC__ */
+ 
+ #endif
+ /* 88bf0570-3001-4e78-a5f2-be5765546192 */ 
+diff --git a/inc/crt/sys/timeb.inl b/inc/crt/sys/timeb.inl
+index db31ccf..4ed7cfb 100644
+--- a/inc/crt/sys/timeb.inl
++++ b/inc/crt/sys/timeb.inl
+@@ -19,6 +19,39 @@
+ #ifndef _INC_TIMEB_INL
+ #define _INC_TIMEB_INL
+ 
++/* _STATIC_ASSERT is for enforcing boolean/integral conditions at compile time.
++   Since it is purely a compile-time mechanism that generates no code, the check
++   is left in even if _DEBUG is not defined. */
++
++#ifndef _STATIC_ASSERT
++#define _STATIC_ASSERT(expr) typedef char __static_assert_t[ (expr) ]
++#endif
++
++#if     !__STDC__
++
++/* Non-ANSI name for compatibility */
++
++#pragma warning(push)
++#pragma warning(disable:4996)
++
++#ifdef _USE_32BIT_TIME_T
++static __inline void __CRTDECL ftime(struct timeb * _Tmb)
++{
++    _STATIC_ASSERT( sizeof(struct timeb) == sizeof(struct _timeb) );
++    _ftime((struct _timeb *)_Tmb);
++}
++#else
++static __inline void __CRTDECL ftime(struct timeb * _Tmb)
++{
++    _STATIC_ASSERT( sizeof(struct timeb) == sizeof(struct __timeb64) );
++    _ftime64((struct __timeb64 *)_Tmb);
++}
++#endif /* _USE_32BIT_TIME_T */
++
++#pragma warning(pop)
++
++#endif /* !__STDC__ */
++
+ 
+ #endif /* _INC_TIMEB_INL */
+ /* 88bf0570-3001-4e78-a5f2-be5765546192 */ 

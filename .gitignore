@@ -1,0 +1,5 @@
+Debug/
+Release/
+vs90_msvcrt.ncb
+vs90_msvcrt.suo
+*.user

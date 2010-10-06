@@ -1,0 +1,7 @@
+/def 
+/machine:X86 
+/name:msvcrt.dll 
+/verbose 
+/export:_environ,DATA 
+/export:_getpid 
+/export:getpid:_getpid

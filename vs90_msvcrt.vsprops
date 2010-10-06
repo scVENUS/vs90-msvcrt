@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="vs90_msvcrt"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(WdkDir)\inc\crt&quot;"
+		AdditionalUsingDirectories="&quot;$(WdkDir)\inc\crt&quot;"
+		PreprocessorDefinitions="_USE_MSVCRT;_NO_DEPRECATED__TOLOWER__TOUPPER"
+		RuntimeLibrary="2"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="msvcrt_winxp.obj msvcrt_supplement.lib"
+		AdditionalLibraryDirectories="&quot;$(WdkDir)\lib\Crt\i386&quot;;&quot;$(WdkDir)\lib\wxp\i386&quot;"
+	/>
+	<Tool
+		Name="VCManifestTool"
+		EmbedManifest="false"
+	/>
+	<UserMacro
+		Name="WdkDir"
+		Value="D:\fgng\wdk"
+		PerformEnvironmentSet="true"
+	/>
+</VisualStudioPropertySheet>
