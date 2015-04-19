@@ -1,6 +1,8 @@
 About VS2008 with MSVCRT.DLL (vs90-msvcrt)
 ==========================================
 
+Read my blog http://anselm-kruis.de/cgi-bin/weblog_basic/index.php?p=6 for additional information.
+
 You know the MS DLL hell, don't you? Well, if you don't, then this project is probably nothing for you. But if you know the drama with the different C-runtime library versions, if you know, that you may not pass any resources between different instances of the C-runtime, then this project might be helpful.
 
 There are several discussions on how to link against MSVCRT.DLL using a current Microsoft C++-compiler, most notably Koby Kahane blog about "Dynamically linking with MSVCRT.DLL using Visual C++ 2005" (1). The basic idea is always the same. The Windows Driver Kit contains a C++ compiler and this compiler is using MSVCRT.DLL. Fortunately, the compiler itself is identical to the C++-compiler from the then current Visual studio. Therefore it is possible to install both Visual Studio and the WDK and configure Visual Studio to use the CRT header files and link libraries from the WDK. 
