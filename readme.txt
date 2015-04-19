@@ -20,12 +20,10 @@ The project consists of
 
 All files are PUBLIC DOMAIN. 
 
-Currently, I release this project as a GIT repository only. You can clone the 
-repository using "git clone git://git.berlios.de/vs90-msvcrt". The project is 
-hosted at belios.de. Please use the facilities provided at 
-https://developer.berlios.de/projects/vs90-msvcrt/
-to report bugs, send patches or ask for help. Additionally you can send mail to
-akruis _at_ users _dot_ berlios _dot_ de. 
+Currently, I release this project as a GIT repository only. Previously it was hosted
+on berlios.de, then berlios closed down. Now I put it on Github.
+Please use the Github issue tracker (https://github.com/akruis/vs90-msvcrt/issues)
+to report bugs or send pull requests. 
 
 
 Step by Step Build Instructions
