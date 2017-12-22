@@ -2,6 +2,7 @@ About VS2008 with MSVCRT.DLL (vs90-msvcrt)
 ==========================================
 
 Read my blog http://anselm-kruis.de/cgi-bin/weblog_basic/index.php?p=6 for additional information.
+(2017-12-22: The blog doesn't exist any more, but here is a copy of the text: https://akruis.bitbucket.io/weblog%20-%20anselm-kruis.de/2012-06-03%20MSVCRT.DLL%20and%20Visual%20Studio.xhtml)
 
 You know the MS DLL hell, don't you? Well, if you don't, then this project is probably nothing for you. But if you know the drama with the different C-runtime library versions, if you know, that you may not pass any resources between different instances of the C-runtime, then this project might be helpful.
 
